@@ -26,7 +26,7 @@ export const getUserById = async(req, res) =>{
     }
 }
 
-export const createUser = async(req, res) =>{
+export const Register = async(req, res) =>{
     const {name, email, password, confPassword, role} = req.body;
     if(password !== confPassword) return res.status(400).json({msg: "Password dan Confirm Password tidak cocok"});
     const hashPassword = await argon2.hash(password);
@@ -46,7 +46,7 @@ export const createUser = async(req, res) =>{
 export const updateUser = async(req, res) =>{
     const user = await User.findOne({
         where: {
-            uuid: req.params.id
+            uuid: req.session.userId
         }
     });
     if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
@@ -66,7 +66,7 @@ export const updateUser = async(req, res) =>{
             role: role
         },{
             where:{
-                id: user.id
+                uuid: req.session.userId
             }
         });
         res.status(200).json({msg: "User Updated"});
