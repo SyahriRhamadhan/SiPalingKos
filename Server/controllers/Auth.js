@@ -8,6 +8,34 @@ export const getRoot = async(req, res) => {
     });
 }
 
+export const Register = async(req, res) =>{
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+    const {name, email, password, confPassword, role} = req.body;
+    const user = await User.findOne({ 
+        where: { email: email } 
+    });
+    if (user) {
+        res.status(400).json({ msg: "Email sudah terdaftar" });
+        return;
+    } 
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({msg: "Password harus teridiri dari angka, huruf besar, huruf kecil dan 8 karakter"});
+    }
+    if(password !== confPassword) return res.status(400).json({msg: "Password dan Confirm Password tidak cocok"});
+    const hashPassword = await argon2.hash(password);
+    try {
+        await User.create({
+            name: name,
+            email: email,
+            password: hashPassword,
+            role: role
+        });
+        res.status(201).json({msg: "Register Berhasil"});
+    } catch (error) {
+        res.status(400).json({msg: error.message});
+    }
+}
+
 export const Login = async (req, res) =>{
     const user = await User.findOne({
         where: {
