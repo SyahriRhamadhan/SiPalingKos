@@ -35,6 +35,10 @@ const Users = db.define('users',{
             notEmpty: true
         }
     },
+    verified:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
     role:{
         type: DataTypes.STRING,
         allowNull: false,

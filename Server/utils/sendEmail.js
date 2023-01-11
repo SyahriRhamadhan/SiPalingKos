@@ -3,18 +3,18 @@ import nodemailer from "nodemailer";
 export default async (email, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.HOST,
-      service: process.env.SERVICE,
-      port: Number(process.env.EMAIL_PORT),
-      secure: Boolean(process.env.SECURE),
+      service: 'gmail',
       auth: {
-        user: process.env.USER,
-        pass: process.env.PASS,
+          user: 'syahrirhamadhan21@gmail.com',
+          pass: 'knowme322'
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
 
     await transporter.sendMail({
-      from: process.env.USER,
+      from: 'syahrirhamadhan21@gmail.com',
       to: email,
       subject: subject,
       text: text,

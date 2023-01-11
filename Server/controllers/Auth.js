@@ -1,6 +1,6 @@
 import User from "../models/UserModel.js";
 import argon2 from "argon2";
-
+import sendEmail from "../utils/sendEmail.js";
 export const getRoot = async(req, res) => {
     res.status(200).json({
       status: "OK",
@@ -51,6 +51,21 @@ export const Login = async (req, res) =>{
     const email = user.email;
     const role = user.role;
     res.status(200).json({uuid, name, email, role});
+}
+
+export const sendVerif = async (req, res) =>{
+    try {
+        const user = await User.findOne({
+            where: {
+                uuid: req.session.userId
+            }
+        });
+        if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
+        const url = `${process.env.BASE_URL}users/${user.id}/verify`;
+        await sendEmail(user.email, "Verify Email", url);
+    } catch (error) {
+        res.status(400).json({msg: error.message});
+    }
 }
 
 export const Me = async (req, res) =>{
